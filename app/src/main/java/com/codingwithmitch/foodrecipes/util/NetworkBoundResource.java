@@ -61,9 +61,9 @@ public abstract class NetworkBoundResource<CacheObject, RequestObject> {
     /**
      * 1)observe local db
      * 2) if <condition/> query the network.
-     * 3) stop observering the local db
+     * 3) stop observing the local db
      * 4) insert new data into local db
-     * 5) begin obserfin local db again to see the refreshed data from network.
+     * 5) begin observing local db again to see the refreshed data from network.
      * @param dbSource
      */
     private void fetchFromNetwork(final LiveData<CacheObject> dbSource) {
