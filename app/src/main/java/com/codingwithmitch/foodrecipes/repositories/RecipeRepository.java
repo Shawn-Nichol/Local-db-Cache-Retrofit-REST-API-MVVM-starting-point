@@ -1,6 +1,7 @@
 package com.codingwithmitch.foodrecipes.repositories;
 
 import android.content.Context;
+import android.util.Log;
 
 
 import androidx.annotation.NonNull;
@@ -23,6 +24,7 @@ import persistence.RecipeDatabase;
 
 public class RecipeRepository {
 
+    private static final String TAG = "RecipeRepository";
     private static RecipeRepository instance;
     private RecipeDao recipeDao;
 
@@ -50,7 +52,26 @@ public class RecipeRepository {
             @NonNull
             @Override
             public void saveCallResult(@NonNull RecipeSearchResponse item) {
+                if(item.getRecipes() != null) { // recipe list will be null if the api key is expired.
+                    Recipe[] recipes = new Recipe[item.getRecipes().size()];
 
+                    int index = 0;
+                    for(long rowid: recipeDao.insertRecipes((Recipe[]) (item.getRecipes().toArray(recipes)))) {
+                        if(rowid == -1) {
+                            Log.d(TAG, "saveCallResult: CONFLICT... This recipe is already in the cache");
+                            // if the recipe already exists... I don't want to sest the ingredients or timestamp
+                            // because they will be erased.
+                            recipeDao.updateRecipe(
+                                    recipes[index].getRecipe_id(),
+                                    recipes[index].getTitle(),
+                                    recipes[index].getPublisher(),
+                                    recipes[index].getImage_url(),
+                                    recipes[index].getSocial_rank()
+                            );
+                        }
+                        index++;
+                    }
+                }
             }
 
             /**
