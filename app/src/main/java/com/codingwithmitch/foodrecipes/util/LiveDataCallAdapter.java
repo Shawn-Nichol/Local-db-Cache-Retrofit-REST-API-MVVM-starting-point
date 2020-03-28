@@ -24,7 +24,6 @@ public class LiveDataCallAdapter<R> implements CallAdapter<R, LiveData<ApiRespon
 
     private Type responseType;
 
-    // Constructor
     public LiveDataCallAdapter(Type responseType) {
         this.responseType = responseType;
     }
@@ -36,7 +35,7 @@ public class LiveDataCallAdapter<R> implements CallAdapter<R, LiveData<ApiRespon
 
     @Override
     public LiveData<ApiResponse<R>> adapt(final Call<R> call) {
-        return new LiveData<ApiResponse<R>>() {
+        return new LiveData<ApiResponse<R>>(){
             @Override
             protected void onActive() {
                 super.onActive();
@@ -55,4 +54,5 @@ public class LiveDataCallAdapter<R> implements CallAdapter<R, LiveData<ApiRespon
             }
         };
     }
+
 }

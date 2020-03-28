@@ -1,6 +1,8 @@
 package com.codingwithmitch.foodrecipes.viewmodels;
 
 import android.app.Application;
+import android.util.Log;
+
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
@@ -27,26 +29,30 @@ public class RecipeListViewModel extends AndroidViewModel {
 
     public RecipeListViewModel(@NonNull Application application) {
         super(application);
-        recipeRepository = RecipeRepository.getInstance(application);
+        Log.d(TAG, "RecipeListViewModel: ");
+
         init();
+        recipeRepository = RecipeRepository.getInstance(application);
     }
 
-    private void init() {
-        if (viewState == null) {
+    private void init(){
+        Log.d(TAG, "init: ");
+        if(viewState == null){
             viewState = new MutableLiveData<>();
             viewState.setValue(ViewState.CATEGORIES);
         }
     }
 
-    public LiveData<ViewState> getViewstate() {
+    public LiveData<ViewState> getViewstate(){
         return viewState;
     }
 
-    public LiveData<Resource<List<Recipe>>> getRecipes() {
+    public LiveData<Resource<List<Recipe>>> getRecipes(){
         return recipes;
     }
 
-    public void searchRecipesApi(String query, int pageNumber) {
+    public void searchRecipesApi(String query, int pageNumber){
+        Log.d(TAG, "searchRecipesApi: ");
         final LiveData<Resource<List<Recipe>>> repositorySource = recipeRepository.searchRecipesApi(query, pageNumber);
         recipes.addSource(repositorySource, new Observer<Resource<List<Recipe>>>() {
             @Override

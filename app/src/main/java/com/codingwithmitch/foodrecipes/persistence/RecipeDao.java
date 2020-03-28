@@ -1,4 +1,4 @@
-package persistence;
+package com.codingwithmitch.foodrecipes.persistence;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;

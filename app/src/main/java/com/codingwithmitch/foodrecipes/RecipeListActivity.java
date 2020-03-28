@@ -1,5 +1,6 @@
 package com.codingwithmitch.foodrecipes;
 
+import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
@@ -41,6 +42,9 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
+
+        Log.d(TAG, "onCreate: ");
+
         mRecyclerView = findViewById(R.id.recipe_list);
         mSearchView = findViewById(R.id.search_view);
 
@@ -48,12 +52,54 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
         initRecyclerView();
         initSearchView();
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         subscribeObservers();
+        setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
     }
 
+    private void subscribeObservers(){
+        Log.d(TAG, "subscribeObservers: ");
 
-    private void initRecyclerView() {
+        mRecipeListViewModel.getRecipes().observe(this, new Observer<Resource<List<Recipe>>>() {
+            @Override
+            public void onChanged(@Nullable Resource<List<Recipe>> listResource) {
+                if(listResource != null){
+                    Log.d(TAG, "onChanged: status: " + listResource.status);
+
+                    if(listResource.data != null){
+                        Testing.printRecipes(listResource.data, "data: ");
+                    }
+                }
+            }
+        });
+
+        mRecipeListViewModel.getViewstate().observe(this, new Observer<RecipeListViewModel.ViewState>() {
+            @Override
+            public void onChanged(@Nullable RecipeListViewModel.ViewState viewState) {
+                if(viewState != null){
+                    switch (viewState){
+
+                        case RECIPES:{
+                            // recipes will show automatically from other observer
+                            break;
+                        }
+
+                        case CATEGORIES:{
+                            displaySearchCategories();
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    private void searchRecipeApi(String query){
+        Log.d(TAG, "searchRecipeApi: ");
+        mRecipeListViewModel.searchRecipesApi(query, 1);
+    }
+
+    private void initRecyclerView(){
+        Log.d(TAG, "initRecyclerView: ");
         mAdapter = new RecipeRecyclerAdapter(this);
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
         mRecyclerView.addItemDecoration(itemDecorator);
@@ -61,11 +107,11 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void initSearchView() {
+    private void initSearchView(){
+        Log.d(TAG, "initSearchView: ");
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-
                 searchRecipeApi(s);
                 return false;
             }
@@ -89,50 +135,11 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         searchRecipeApi(category);
     }
 
-    private void subscribeObservers() {
-
-        mRecipeListViewModel.getRecipes().observe(this, new Observer<Resource<List<Recipe>>>() {
-            @Override
-            public void onChanged(Resource<List<Recipe>> listResource) {
-                if(listResource != null) {
-                    Log.d(TAG, "onChanged: status: " + listResource.status);
-
-                    if(listResource.data != null) {
-                        Testing.printRecipes(listResource.data, "data");
-                    }
-                }
-            }
-        });
-
-        mRecipeListViewModel.getViewstate().observe(this, new Observer<RecipeListViewModel.ViewState>() {
-            @Override
-            public void onChanged(RecipeListViewModel.ViewState viewState) {
-                if (viewState != null) {
-                    switch (viewState) {
-                        case RECIPES: {
-                            // recipes will show autmatically from another observer.
-                            break;
-                        }
-
-                        case CATEGORIES: {
-                            displaySearchCategories();
-                            break;
-                        }
-                    }
-                }
-            }
-
-        });
-    }
-
-    private void searchRecipeApi(String query) {
-        mRecipeListViewModel.searchRecipesApi(query, 1);
-    }
-
-
-    private void displaySearchCategories() {
+    private void displaySearchCategories(){
+        Log.d(TAG, "displaySearchCategories: ");
         mAdapter.displaySearchCategories();
     }
+
 
 }
 
