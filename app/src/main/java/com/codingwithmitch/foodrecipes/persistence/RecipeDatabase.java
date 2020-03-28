@@ -1,6 +1,7 @@
 package com.codingwithmitch.foodrecipes.persistence;
 
 import android.content.Context;
+import android.util.Log;
 
 import androidx.room.Database;
 import androidx.room.Room;
@@ -10,7 +11,7 @@ import androidx.room.TypeConverters;
 import com.codingwithmitch.foodrecipes.models.Recipe;
 
 
-@Database(entities = {Recipe.class}, version = 1)
+@Database(entities = {Recipe.class}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class RecipeDatabase extends RoomDatabase {
 

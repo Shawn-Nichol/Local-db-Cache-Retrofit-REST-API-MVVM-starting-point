@@ -30,9 +30,9 @@ public class RecipeListViewModel extends AndroidViewModel {
     public RecipeListViewModel(@NonNull Application application) {
         super(application);
         Log.d(TAG, "RecipeListViewModel: ");
-
-        init();
         recipeRepository = RecipeRepository.getInstance(application);
+        init();
+
     }
 
     private void init(){
