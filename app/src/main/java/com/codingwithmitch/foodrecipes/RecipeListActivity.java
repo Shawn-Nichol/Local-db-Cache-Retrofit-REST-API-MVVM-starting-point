@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProviders;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,10 +15,19 @@ import androidx.appcompat.widget.Toolbar;
 
 import com.codingwithmitch.foodrecipes.adapters.OnRecipeListener;
 import com.codingwithmitch.foodrecipes.adapters.RecipeRecyclerAdapter;
+import com.codingwithmitch.foodrecipes.models.Recipe;
+import com.codingwithmitch.foodrecipes.util.Resource;
+import com.codingwithmitch.foodrecipes.util.Testing;
 import com.codingwithmitch.foodrecipes.util.VerticalSpacingItemDecorator;
 import com.codingwithmitch.foodrecipes.viewmodels.RecipeListViewModel;
 
+import java.util.List;
 
+
+/**
+ * data:
+ * listResource:
+ */
 public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
 
     private static final String TAG = "RecipeListActivity";
@@ -56,7 +66,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
             @Override
             public boolean onQueryTextSubmit(String s) {
 
-
+                searchRecipeApi(s);
                 return false;
             }
 
@@ -76,11 +86,25 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
     @Override
     public void onCategoryClick(String category) {
-
+        searchRecipeApi(category);
     }
 
     private void subscribeObservers() {
-        mRecipeListViewModel.getViewState().observe(this, new Observer<RecipeListViewModel.ViewState>() {
+
+        mRecipeListViewModel.getRecipes().observe(this, new Observer<Resource<List<Recipe>>>() {
+            @Override
+            public void onChanged(Resource<List<Recipe>> listResource) {
+                if(listResource != null) {
+                    Log.d(TAG, "onChanged: status: " + listResource.status);
+
+                    if(listResource.data != null) {
+                        Testing.printRecipes(listResource.data, "data");
+                    }
+                }
+            }
+        });
+
+        mRecipeListViewModel.getViewstate().observe(this, new Observer<RecipeListViewModel.ViewState>() {
             @Override
             public void onChanged(RecipeListViewModel.ViewState viewState) {
                 if (viewState != null) {
@@ -99,6 +123,10 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
             }
 
         });
+    }
+
+    private void searchRecipeApi(String query) {
+        mRecipeListViewModel.searchRecipesApi(query, 1);
     }
 
 
