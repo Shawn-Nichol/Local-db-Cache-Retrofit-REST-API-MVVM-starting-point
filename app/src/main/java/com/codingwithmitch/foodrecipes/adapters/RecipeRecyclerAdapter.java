@@ -199,17 +199,3 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-

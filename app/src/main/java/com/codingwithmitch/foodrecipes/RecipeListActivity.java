@@ -66,7 +66,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
                     Log.d(TAG, "onChanged: status: " + listResource.status);
 
                     if(listResource.data != null){
-                        Testing.printRecipes(listResource.data, "data: ");
+                        mAdapter.setRecipes(listResource.data);
                     }
                 }
             }
@@ -99,7 +99,6 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
     private void initRecyclerView(){
-        Log.d(TAG, "initRecyclerView: ");
         mAdapter = new RecipeRecyclerAdapter(this);
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
         mRecyclerView.addItemDecoration(itemDecorator);
@@ -108,7 +107,6 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
     private void initSearchView(){
-        Log.d(TAG, "initSearchView: ");
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -136,21 +134,11 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
     private void displaySearchCategories(){
-        Log.d(TAG, "displaySearchCategories: ");
         mAdapter.displaySearchCategories();
     }
 
 
 }
-
-
-
-
-
-
-
-
-
 
 
 
