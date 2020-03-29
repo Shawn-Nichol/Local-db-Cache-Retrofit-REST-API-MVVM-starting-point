@@ -8,6 +8,8 @@ public class Constants {
     public static final int READ_TIMEOUT = 2;  // 2 Seconds
     public static final int WRITE_TIMEMOUT = 2; // 2 Seconds
 
+    public static final int RECIPE_REFRESH_TIME = 60 * 60 * 24 * 30;
+
 
     public static final String[] DEFAULT_SEARCH_CATEGORIES =
             {"Barbeque", "Breakfast", "Chicken", "Beef", "Brunch", "Dinner", "Wine", "Italian"};
