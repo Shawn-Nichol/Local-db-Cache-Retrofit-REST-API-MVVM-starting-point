@@ -29,7 +29,7 @@ dependencies {
     def retrofitVersion = "2.5.0"
     def lifecycle_version = "1.1.1"
     def supportVersion = "28.0.0"
-    def glideVersion = "4.8.0"
+    def glideVersion = "4.11.0"
 
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -58,6 +58,11 @@ dependencies {
     // Glide
     implementation "com.github.bumptech.glide:glide:$glideVersion"
     annotationProcessor "com.github.bumptech.glide:compiler:$glideVersion"
+
+    implementation ("com.github.bumptech.glide:recyclerview-integration:$glideVersion") {
+        // Excludes the support library because it's already included by Glide.
+        transitive = false
+    }
 
     // Circle Image
     implementation 'de.hdodenhof:circleimageview:3.0.0'
