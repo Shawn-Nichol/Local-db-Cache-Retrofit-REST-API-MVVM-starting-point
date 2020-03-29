@@ -1,5 +1,6 @@
 package com.codingwithmitch.foodrecipes;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -34,6 +35,7 @@ import static com.codingwithmitch.foodrecipes.viewmodels.RecipeListViewModel.QUE
 /**
  * data:
  * listResource:
+ * clearFocus:
  */
 public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
 
@@ -136,15 +138,30 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
     private void searchRecipeApi(String query){
         Log.d(TAG, "searchRecipeApi: ");
+        mRecyclerView.smoothScrollToPosition(0);
         mRecipeListViewModel.searchRecipesApi(query, 1);
+        mSearchView.clearFocus();
     }
 
     private void initRecyclerView(){
         mAdapter = new RecipeRecyclerAdapter(this, initGlide());
         VerticalSpacingItemDecorator itemDecorator = new VerticalSpacingItemDecorator(30);
         mRecyclerView.addItemDecoration(itemDecorator);
-        mRecyclerView.setAdapter(mAdapter);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+       mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+           @Override
+           public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+               super.onScrollStateChanged(recyclerView, newState);
+
+               if(!mRecyclerView.canScrollVertically(1)
+                       && mRecipeListViewModel.getViewstate().getValue() == RecipeListViewModel.ViewState.RECIPES) {
+                   mRecipeListViewModel.searchNextPage();
+               }
+           }
+       });
+
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     private void initSearchView(){
@@ -161,6 +178,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
             }
         });
     }
+
 
     @Override
     public void onRecipeClick(int position) {
@@ -179,6 +197,17 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
 
+    @Override
+    public void onBackPressed() {
+        if(mRecipeListViewModel.getViewstate().getValue() == RecipeListViewModel.ViewState.CATEGORIES){
+            super.onBackPressed();
+            Log.d(TAG, "onBackPressed: do nothing");
+        } else {
+            Log.d(TAG, "onBackPressed: return to categories");
+            mRecipeListViewModel.cancelSearchRequest();
+            mRecipeListViewModel.setViewCategories();
+        }
+    }
 }
 
 

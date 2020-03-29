@@ -18,7 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Request manager:
+ * RequestManager, a class for managing and starting requests for glide. Can use lifecycle events to
+ * intelligently stop, start and restart requests. Retrieve either by instantiating a new object, or
+ * take advantage of built in life cycle handling use the static glide.load methods.
  *
  */
 public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
