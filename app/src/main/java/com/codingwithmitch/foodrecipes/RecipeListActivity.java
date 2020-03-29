@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,6 +24,8 @@ import com.codingwithmitch.foodrecipes.util.VerticalSpacingItemDecorator;
 import com.codingwithmitch.foodrecipes.viewmodels.RecipeListViewModel;
 
 import java.util.List;
+
+import static com.codingwithmitch.foodrecipes.viewmodels.RecipeListViewModel.QUERY_EXHAUSTED;
 
 
 /**
@@ -66,7 +69,33 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
                     Log.d(TAG, "onChanged: status: " + listResource.status);
 
                     if(listResource.data != null){
-                        mAdapter.setRecipes(listResource.data);
+                        switch (listResource.status ) {
+                            case LOADING:
+                                if(mRecipeListViewModel.getPageNumber() > 1) {
+                                    mAdapter.displayLoading();
+                                } else {
+                                    mAdapter.displayOnlyLoading();
+                                }
+                                break;
+                            case ERROR:
+                                Log.e(TAG, "onChanged: cannot refresh the cache.");
+                                Log.e(TAG, "onChanged: ERROR message: " + listResource.message);
+                                Log.e(TAG, "onChanged: ERROR, #recipes: " + listResource.data.size());
+                                mAdapter.hideLoading();
+                                mAdapter.setRecipes(listResource.data);
+                                Toast.makeText(RecipeListActivity.this, listResource.message, Toast.LENGTH_LONG).show();
+
+                                if(listResource.message.equals(QUERY_EXHAUSTED)) {
+                                    mAdapter.setQueryExhausted();
+                                }
+                                break;
+                            case SUCCESS:
+                                Log.d(TAG, "onChanged: cache has been refreshed.");
+                                Log.d(TAG, "onChanged: SUCCESS, #Recipes: " + listResource.data.size());
+                                mAdapter.hideLoading();
+                                mAdapter.setRecipes(listResource.data);
+                                break;
+                        }
                     }
                 }
             }
