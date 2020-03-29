@@ -7,12 +7,14 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatImageView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.codingwithmitch.foodrecipes.models.Recipe;
 import com.codingwithmitch.foodrecipes.util.Resource;
@@ -46,53 +48,100 @@ public class RecipeActivity extends BaseActivity {
         getIncomingIntent();
     }
 
-    private void getIncomingIntent(){
-        if(getIntent().hasExtra("recipe")){
+    private void getIncomingIntent() {
+        if (getIntent().hasExtra("recipe")) {
             Recipe recipe = getIntent().getParcelableExtra("recipe");
             Log.d(TAG, "getIncomingIntent: " + recipe.getTitle());
             subscribeObservers(recipe.getRecipe_id());
-
         }
     }
 
     private void subscribeObservers(final String recipeId) {
-        mRecipeViewModel.searchRecipeApi(recipeId).observe(this, new Observer<Resource<Recipe>>(){
+        mRecipeViewModel.searchRecipeApi(recipeId).observe(this, new Observer<Resource<Recipe>>() {
             @Override
-            public void onChanged(Resource<Recipe> recipeResource) {
-                switch (recipeResource.status) {
-                    case LOADING:
-                        showProgressBar(true);
-                        break;
+            public void onChanged(@Nullable Resource<Recipe> recipeResource) {
+                if (recipeResource != null) {
+                    if (recipeResource.data != null) {
+                        switch (recipeResource.status) {
 
-                    case SUCCESS:
-                        Log.d(TAG, "onChanged: cache has been refreshed.");
-                        Log.d(TAG, "onChanged: status: SUCCESS, Recipe: " + recipeResource.data.getTitle());
-                        showParent();
-                        showProgressBar(false);
+                            case LOADING: {
+                                showProgressBar(true);
+                                break;
+                            }
 
-                        break;
+                            case ERROR: {
+                                Log.e(TAG, "onChanged: status: ERROR, Recipe: " + recipeResource.data.getTitle());
+                                Log.e(TAG, "onChanged: ERROR message: " + recipeResource.message);
+                                showParent();
+                                showProgressBar(false);
+                                setRecipeProperties(recipeResource.data);
+                                break;
+                            }
 
-                    case ERROR:
-                        Log.e(TAG, "onChanged: status: ERROR, Recipe: " + recipeResource.data.getTitle());
-                        Log.e(TAG, "onChanged: status: ERROR message: " + recipeResource.message);
-                        Toast.makeText(RecipeActivity.this, recipeResource.message, Toast.LENGTH_SHORT).show();
-                        showParent();
-                        showProgressBar(false);
-
-                        break;
-
+                            case SUCCESS: {
+                                Log.d(TAG, "onChanged: cache has been refreshed.");
+                                Log.d(TAG, "onChanged: status: SUCCESS, Recipe: " + recipeResource.data.getTitle());
+                                showParent();
+                                showProgressBar(false);
+                                setRecipeProperties(recipeResource.data);
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         });
     }
 
+    private void setRecipeProperties(Recipe recipe) {
+        if (recipe != null) {
+            RequestOptions options = new RequestOptions()
+                    .placeholder(R.drawable.white_background)
+                    .error(R.drawable.white_background);
+
+            Glide.with(this)
+                    .setDefaultRequestOptions(options)
+                    .load(recipe.getImage_url())
+                    .into(mRecipeImage);
+
+            mRecipeTitle.setText(recipe.getTitle());
+            mRecipeRank.setText(String.valueOf(Math.round(recipe.getSocial_rank())));
+
+            setIngredients(recipe);
+        }
+    }
+
+    private void setIngredients(Recipe recipe) {
+        mRecipeIngredientsContainer.removeAllViews();
+
+        if (recipe.getIngredients() != null) {
+            for (String ingredient : recipe.getIngredients()) {
+                TextView textView = new TextView(this);
+                textView.setText(ingredient);
+                textView.setTextSize(15);
+                textView.setLayoutParams(
+                        new LinearLayout.LayoutParams(
+                                ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT));
+                mRecipeIngredientsContainer.addView(textView);
+            }
+        } else {
+            TextView textView = new TextView(this);
+            textView.setText("Error retrieving ingredients.\nCheck network connection.");
+            textView.setTextSize(15);
+            textView.setLayoutParams(
+                    new LinearLayout.LayoutParams(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT));
+            mRecipeIngredientsContainer.addView(textView);
+        }
+    }
 
 
-    private void showParent(){
+    private void showParent() {
         mScrollView.setVisibility(View.VISIBLE);
     }
 }
-
 
 
 
