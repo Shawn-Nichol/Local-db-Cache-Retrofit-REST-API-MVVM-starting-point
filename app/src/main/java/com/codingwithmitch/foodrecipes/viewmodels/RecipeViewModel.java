@@ -18,17 +18,15 @@ import com.codingwithmitch.foodrecipes.util.Resource;
 
 public class RecipeViewModel extends AndroidViewModel {
 
-    private static final String TAG = "RecipeViewModel";
-
-    private RecipeRepository mRecipeRepository;
+    private RecipeRepository recipeRepository;
 
     public RecipeViewModel(@NonNull Application application) {
         super(application);
-        mRecipeRepository = RecipeRepository.getInstance(application);
+        recipeRepository = RecipeRepository.getInstance(application);
     }
 
-    public LiveData<Resource<Recipe>> searchRecipeApi(String recipeId) {
-        return mRecipeRepository.searchRecipesApi(recipeId);
+    public LiveData<Resource<Recipe>> searchRecipeApi(String recipeId){
+        return recipeRepository.searchRecipesApi(recipeId);
     }
 
 
