@@ -10,6 +10,8 @@ import androidx.lifecycle.LiveData;
 
 import com.codingwithmitch.foodrecipes.AppExecutors;
 import com.codingwithmitch.foodrecipes.models.Recipe;
+import com.codingwithmitch.foodrecipes.persistence.RecipeDao;
+import com.codingwithmitch.foodrecipes.persistence.RecipeDatabase;
 import com.codingwithmitch.foodrecipes.requests.ServiceGenerator;
 import com.codingwithmitch.foodrecipes.requests.responses.ApiResponse;
 import com.codingwithmitch.foodrecipes.requests.responses.RecipeSearchResponse;
@@ -19,8 +21,7 @@ import com.codingwithmitch.foodrecipes.util.Resource;
 
 import java.util.List;
 
-import persistence.RecipeDao;
-import persistence.RecipeDatabase;
+
 
 public class RecipeRepository {
 
@@ -28,9 +29,11 @@ public class RecipeRepository {
     private static RecipeRepository instance;
     private RecipeDao recipeDao;
 
-    // Singleton
+    //Singleton
     public static RecipeRepository getInstance(Context context){
+        Log.d(TAG, "getInstance: ");
         if(instance == null){
+            Log.d(TAG, "getInstance: creating Instance");
             instance = new RecipeRepository(context);
         }
         return instance;
@@ -38,6 +41,7 @@ public class RecipeRepository {
 
     // Constructor.
     private RecipeRepository(Context context) {
+        Log.d(TAG, "RecipeRepository: Constructor");
         recipeDao = RecipeDatabase.getInstance(context).getRecipeDao();
     }
 
