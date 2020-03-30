@@ -48,6 +48,9 @@ public class RecipeActivity extends BaseActivity {
         getIncomingIntent();
     }
 
+    /**
+     * Get the information from the recipe selected.
+     */
     private void getIncomingIntent() {
         if (getIntent().hasExtra("recipe")) {
             Recipe recipe = getIntent().getParcelableExtra("recipe");
@@ -56,6 +59,9 @@ public class RecipeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * The recipe information.
+     */
     private void subscribeObservers(final String recipeId) {
         mRecipeViewModel.searchRecipeApi(recipeId).observe(this, new Observer<Resource<Recipe>>() {
             @Override
@@ -93,6 +99,9 @@ public class RecipeActivity extends BaseActivity {
         });
     }
 
+    /**
+     * Display information about the selected recipe.
+     */
     private void setRecipeProperties(Recipe recipe) {
         if (recipe != null) {
             RequestOptions options = new RequestOptions()
@@ -111,6 +120,9 @@ public class RecipeActivity extends BaseActivity {
         }
     }
 
+    /**
+     * Display the ingredients on the screen.
+     */
     private void setIngredients(Recipe recipe) {
         mRecipeIngredientsContainer.removeAllViews();
 

@@ -25,7 +25,6 @@ import com.codingwithmitch.foodrecipes.adapters.OnRecipeListener;
 import com.codingwithmitch.foodrecipes.adapters.RecipeRecyclerAdapter;
 import com.codingwithmitch.foodrecipes.models.Recipe;
 import com.codingwithmitch.foodrecipes.util.Resource;
-import com.codingwithmitch.foodrecipes.util.Testing;
 import com.codingwithmitch.foodrecipes.util.VerticalSpacingItemDecorator;
 import com.codingwithmitch.foodrecipes.viewmodels.RecipeListViewModel;
 
@@ -37,7 +36,7 @@ import static com.codingwithmitch.foodrecipes.viewmodels.RecipeListViewModel.QUE
 /**
  * data:
  * listResource:
- * clearFocus:
+ * clearFocus: called when the view wants to give up focus.
  */
 public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
 
@@ -66,6 +65,9 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         setSupportActionBar((Toolbar)findViewById(R.id.toolbar));
     }
 
+    /**
+     * Observe the livedata from the site.
+     */
     private void subscribeObservers(){
         Log.d(TAG, "subscribeObservers: ");
 
@@ -129,6 +131,9 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         });
     }
 
+    /**
+     * Provides type independent options to customize loads with glide.
+     */
     private RequestManager initGlide() {
         RequestOptions options= new RequestOptions()
                 .placeholder(R.drawable.white_background)
@@ -138,6 +143,9 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
 
     }
 
+    /**
+     * Search Recipe API
+     */
     private void searchRecipeApi(String query){
         Log.d(TAG, "searchRecipeApi: ");
         mRecyclerView.smoothScrollToPosition(0);
@@ -145,6 +153,9 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mSearchView.clearFocus();
     }
 
+    /**
+     * Start RecyclerView.
+     */
     private void initRecyclerView(){
         ViewPreloadSizeProvider<String> viewPreloader = new ViewPreloadSizeProvider<>();
         mAdapter = new RecipeRecyclerAdapter(this, initGlide(), viewPreloader);
@@ -152,37 +163,49 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         mRecyclerView.addItemDecoration(itemDecorator);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        RecyclerViewPreloader<String> preloader = new RecyclerViewPreloader<String>
-                (Glide.with(this),
-                        mAdapter,
-                        viewPreloader,
-                        30);
+        RecyclerViewPreloader<String> preloader = new RecyclerViewPreloader<String>(
+                Glide.with(this),
+                mAdapter,
+                viewPreloader,
+                30);
 
         mRecyclerView.addOnScrollListener(preloader);
 
-       mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-           @Override
-           public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-               super.onScrollStateChanged(recyclerView, newState);
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
 
-               if(!mRecyclerView.canScrollVertically(1)
-                       && mRecipeListViewModel.getViewstate().getValue() == RecipeListViewModel.ViewState.RECIPES) {
-                   mRecipeListViewModel.searchNextPage();
-               }
-           }
-       });
+                if(!mRecyclerView.canScrollVertically(1)
+                        && mRecipeListViewModel.getViewstate().getValue() == RecipeListViewModel.ViewState.RECIPES){
+                    mRecipeListViewModel.searchNextPage();
+                }
+            }
+        });
 
         mRecyclerView.setAdapter(mAdapter);
     }
 
     private void initSearchView(){
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            /**
+             * Call when the user submits the query.
+             * @param s The query text that is to be submitted
+             * @return true if the query has been handled by the listener, false to let the SearchView perform the default
+             *          action.
+             */
             @Override
             public boolean onQueryTextSubmit(String s) {
                 searchRecipeApi(s);
                 return false;
             }
 
+            /**
+             * Called when the query text is changed by the user.
+             * @param s
+             * @return false if the SearchView should perform the default action of showing any suggestions
+             *          if available, true if the action was handled by a listener.
+             */
             @Override
             public boolean onQueryTextChange(String s) {
                 return false;
@@ -191,6 +214,10 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
     }
 
 
+    /**
+     * Run from the Recipe viewHolder.
+     * @param position the recipe clicked.
+     */
     @Override
     public void onRecipeClick(int position) {
         Intent intent = new Intent(this, RecipeActivity.class);
@@ -198,18 +225,28 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         startActivity(intent);
     }
 
+    /**
+     * The category selected.
+     */
     @Override
     public void onCategoryClick(String category) {
         searchRecipeApi(category);
     }
 
+    /**
+     * Displays the search categories.
+     */
     private void displaySearchCategories(){
         mAdapter.displaySearchCategories();
     }
 
 
+    /**
+     * Called when the activity has detected the user's press of the back key.
+     */
     @Override
     public void onBackPressed() {
+        // Back press if the in the categories view.
         if(mRecipeListViewModel.getViewstate().getValue() == RecipeListViewModel.ViewState.CATEGORIES){
             super.onBackPressed();
             Log.d(TAG, "onBackPressed: do nothing");
