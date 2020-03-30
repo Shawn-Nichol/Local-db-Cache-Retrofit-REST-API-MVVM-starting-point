@@ -27,7 +27,7 @@ public interface RecipeDao {
     void updateRecipe(String recipe_id, String title, String publisher, String image_url, float social_rank);
 
     // NOTE: The SQL query sometimes won't return EXACTLY what the api does since the API might use a different query
-    // or even a different database. But they are very very close.
+    // or even a different database.
     @Query("SELECT * FROM recipes WHERE title LIKE '%' || :query || '%' OR " + " ingredients LIKE '%' || :query || '%'" +
             " ORDER BY social_rank DESC LIMIT (:pageNumber * 30)")
     LiveData<List<Recipe>> searchRecipes(String query, int pageNumber);

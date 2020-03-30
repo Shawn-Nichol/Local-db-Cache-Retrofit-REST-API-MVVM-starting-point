@@ -1,9 +1,8 @@
 package com.codingwithmitch.foodrecipes.requests.responses;
 
-import android.util.Log;
+
 
 import java.io.IOException;
-
 import retrofit2.Response;
 
 

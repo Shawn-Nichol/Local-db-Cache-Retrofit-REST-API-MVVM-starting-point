@@ -45,6 +45,9 @@ public class CategoryViewHolder extends RecyclerView.ViewHolder implements View.
         categoryTitle.setText(recipe.getTitle());
     }
 
+    /**
+     * Category selected.
+     */
     @Override
     public void onClick(View v) {
         listener.onCategoryClick(categoryTitle.getText().toString());

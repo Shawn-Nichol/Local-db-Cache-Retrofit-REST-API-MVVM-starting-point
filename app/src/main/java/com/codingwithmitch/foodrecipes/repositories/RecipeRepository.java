@@ -24,9 +24,7 @@ import com.codingwithmitch.foodrecipes.util.Resource;
 import java.util.List;
 
 
-/**
- * AppExecutors
- */
+
 public class RecipeRepository {
 
     private static final String TAG = "RecipeRepository";
@@ -34,6 +32,7 @@ public class RecipeRepository {
     private static RecipeRepository instance;
     private RecipeDao recipeDao;
 
+    // Singleton.
     public static RecipeRepository getInstance(Context context){
         if(instance == null){
             instance = new RecipeRepository(context);
@@ -41,7 +40,7 @@ public class RecipeRepository {
         return instance;
     }
 
-
+    // Constructor.
     private RecipeRepository(Context context) {
         recipeDao = RecipeDatabase.getInstance(context).getRecipeDao();
     }
@@ -58,10 +57,11 @@ public class RecipeRepository {
 
                     int index = 0;
                     for(long rowid: recipeDao.insertRecipes((Recipe[]) (item.getRecipes().toArray(recipes)))){
+
                         if(rowid == -1){
                             Log.d(TAG, "saveCallResult: CONFLICT... This recipe is already in the cache");
-                            // if the recipe already exists... I don't want to set the ingredients or timestamp b/c
-                            // they will be erased
+
+                            // Update: if the recipe already exists... don't load.
                             recipeDao.updateRecipe(
                                     recipes[index].getRecipe_id(),
                                     recipes[index].getTitle(),

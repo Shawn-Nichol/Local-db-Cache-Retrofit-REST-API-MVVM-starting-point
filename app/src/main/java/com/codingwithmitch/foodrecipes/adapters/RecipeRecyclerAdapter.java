@@ -47,12 +47,20 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
     private RequestManager requestManager;
     private ViewPreloadSizeProvider<String> preloadSizeProvider;
 
+    // Constructor
     public RecipeRecyclerAdapter(OnRecipeListener mOnRecipeListener, RequestManager requestManager, ViewPreloadSizeProvider<String> viewPreloadSizeProvider) {
         this.mOnRecipeListener = mOnRecipeListener;
         this.requestManager = requestManager;
         this.preloadSizeProvider = viewPreloadSizeProvider;
     }
 
+    /**
+     * Called when RecyclerView needs a new RecyclerView.ViewHolder of the given type to represent an item.
+     * @param viewGroup The ViewGroup into which the new View will be added after it is bound to an
+     *                  adapter
+     * @param i The view type of the new View.
+     * @return a new ViewHolder that holds a View of the given view type.
+     */
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
@@ -89,6 +97,14 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
+    /**
+     * Called by RecyclerView to display the data at the specified position. This method should update
+     * the contents of the itemView to reflect the item at the given position.
+     *
+     * @param viewHolder The ViewHolder wich should be updated to represent the contents of the item at
+     *                   the given position.
+     * @param i The position of the item within the adapter's data set.
+     */
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int i) {
 
@@ -101,6 +117,13 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     }
 
+    /**
+     * Return the View type of the item at position for the purposes of view recycling.
+     *
+     * @param position position in the query.
+     * @return int, identifying the type of the view needed to represent the item at position. Type codes
+     * need not be contiguous.
+     */
     @Override
     public int getItemViewType(int position) {
         if(mRecipes.get(position).getSocial_rank() == -1){
@@ -120,6 +143,17 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         else{
             return RECIPE_TYPE;
         }
+    }
+
+    /**
+     * Size of the recyclerview.
+     */
+    @Override
+    public int getItemCount() {
+        if(mRecipes != null){
+            return mRecipes.size();
+        }
+        return 0;
     }
 
     /**
@@ -163,7 +197,9 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         }
     }
 
-    // Pagination loading.
+    /**
+     * Pagination.
+     */
     public void displayLoading(){
         if(mRecipes == null) {
             mRecipes = new ArrayList<>();
@@ -201,13 +237,7 @@ public class RecipeRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         notifyDataSetChanged();
     }
 
-    @Override
-    public int getItemCount() {
-        if(mRecipes != null){
-            return mRecipes.size();
-        }
-        return 0;
-    }
+
 
     public void setRecipes(List<Recipe> recipes){
         mRecipes = recipes;
