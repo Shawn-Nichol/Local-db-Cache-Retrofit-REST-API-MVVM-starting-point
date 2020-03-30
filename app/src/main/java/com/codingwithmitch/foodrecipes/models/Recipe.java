@@ -11,6 +11,9 @@ import androidx.room.PrimaryKey;
 
 import java.util.Arrays;
 
+/**
+ * Table info for the database.
+ */
 @Entity(tableName = "recipes")
 public class Recipe implements Parcelable{
 

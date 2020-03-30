@@ -15,12 +15,11 @@ import static com.codingwithmitch.foodrecipes.util.Constants.READ_TIMEOUT;
 import static com.codingwithmitch.foodrecipes.util.Constants.WRITE_TIMEMOUT;
 
 /**
- * factory
- * addCallAdapterFactory:
- * OkHttpClient
+ * ServiceGenerator gets information from web source.
  */
 public class ServiceGenerator {
 
+    // OkHttpClient: Used to create Http connection.
     private static OkHttpClient client = new OkHttpClient.Builder()
 
             // establish connection to server.
@@ -36,11 +35,20 @@ public class ServiceGenerator {
 
             .build();
 
+    // Retrofit adapts a Java interface to Http calls.
     private static Retrofit.Builder retrofitBuilder =
             new Retrofit.Builder()
+
+                    // The URL you wish to get information from.
                     .baseUrl(Constants.BASE_URL)
+
+                    // The Http Client used for requests.
                     .client(client)
+
+                    // Add a call adapter factory for supporting service method return types.
                     .addCallAdapterFactory(new LiveDataCallAdapterFactory())
+
+                    // Add converter factory for serialization and deserialization of objects.
                     .addConverterFactory(GsonConverterFactory.create());
 
     private static Retrofit retrofit = retrofitBuilder.build();

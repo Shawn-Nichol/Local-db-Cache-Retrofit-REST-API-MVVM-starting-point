@@ -8,12 +8,15 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 
 public class Converters {
+
+    // Converts from JSON
     @TypeConverter
     public static String[] fromString(String value) {
         Type listType = new TypeToken<String[]>() {}.getType();
         return new Gson().fromJson(value, listType);
     }
 
+    // Converts from JSON
     @TypeConverter
     public static String fromArrayList(String[] list) {
         Gson gson = new Gson();

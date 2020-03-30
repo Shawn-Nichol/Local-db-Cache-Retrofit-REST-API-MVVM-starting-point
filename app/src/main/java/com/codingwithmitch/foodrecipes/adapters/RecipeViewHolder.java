@@ -14,6 +14,9 @@ import com.bumptech.glide.util.ViewPreloadSizeProvider;
 import com.codingwithmitch.foodrecipes.R;
 import com.codingwithmitch.foodrecipes.models.Recipe;
 
+/**
+ * Recipe ViewHolder, displays recipe info in recyclerview.
+ */
 public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
 
     TextView title, publisher, socialScore;
@@ -54,6 +57,10 @@ public class RecipeViewHolder extends RecyclerView.ViewHolder implements View.On
 
     }
 
+    /**
+     * Recipe clicked.
+     * @param v
+     */
     @Override
     public void onClick(View v) {
         onRecipeListener.onRecipeClick(getAdapterPosition());

@@ -17,6 +17,9 @@ import com.codingwithmitch.foodrecipes.util.Resource;
 
 import java.util.List;
 
+/**
+ * ViewModel for the RecipeListActivity.
+ */
 public class RecipeListViewModel extends AndroidViewModel {
 
     private static final String TAG = "RecipeListViewModel";
@@ -37,6 +40,7 @@ public class RecipeListViewModel extends AndroidViewModel {
     private String query;
     private long requestStartTime;
 
+    // Constructor.
     public RecipeListViewModel(@NonNull Application application) {
         super(application);
         Log.d(TAG, "RecipeListViewModel: ");
@@ -45,6 +49,9 @@ public class RecipeListViewModel extends AndroidViewModel {
 
     }
 
+    /**
+     * Initialize ViewState.
+     */
     private void init() {
         Log.d(TAG, "init: ");
         if (viewState == null) {
